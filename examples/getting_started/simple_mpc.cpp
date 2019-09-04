@@ -45,8 +45,8 @@ int main( )
     // -------------------------
 	DifferentialState xB;
 	DifferentialState xW;
-	DifferentialState vB;
-	DifferentialState vW;
+	// DifferentialState vB;
+	// DifferentialState vW;
 
 	Control R;
 	Control F;
@@ -61,10 +61,10 @@ int main( )
     // -------------------------------
     DifferentialEquation f;
 
-	f << dot(xB) == vB;
-	f << dot(xW) == vW;
-	f << dot(vB) == ( -kS*xB + kS*xW + F ) / mB;
-	f << dot(vW) == (  kS*xB - (kT+kS)*xW + kT*R - F ) / mW;
+	// f << dot(xB) == vB;
+	// f << dot(xW) == vW;
+	f << dot(xB) == ( -kS*xB + kS*xW + F ) / mB;
+	f << dot(xW) == (  kS*xB - (kT+kS)*xW + kT*R - F ) / mW;
 
 
     // DEFINE LEAST SQUARE FUNCTION:
@@ -73,15 +73,15 @@ int main( )
 
     h << xB;
     h << xW;
-	h << vB;
-    h << vW;
+	// h << vB;
+    // h << vW;
 
-    DMatrix Q(4,4);
+    DMatrix Q(2,2);
     Q.setIdentity();
 	Q(0,0) = 10.0;
 	Q(1,1) = 10.0;
 
-    DVector r(4);
+    DVector r(2);
     r.setAll( 0.0 );
 
 
@@ -96,8 +96,8 @@ int main( )
 
 	ocp.subjectTo( f );
 
-	ocp.subjectTo( -500.0 <= F <= 500.0 );
-	ocp.subjectTo( R == 0.0 );
+	// ocp.subjectTo( -500.0 <= F <= 500.0 );
+	// ocp.subjectTo( R == 0.0 );
 
 
 
@@ -122,11 +122,11 @@ int main( )
     // ----------------------------------------------------------
 	SimulationEnvironment sim( 0.0,3.0,process,controller );
 
-	DVector x0(4);
+	DVector x0(2);
 	x0(0) = 0.01;
 	x0(1) = 0.0;
-	x0(2) = 0.0;
-	x0(3) = 0.0;
+	// x0(2) = 0.0;
+	// x0(3) = 0.0;
 
 	if (sim.init( x0 ) != SUCCESSFUL_RETURN)
 		exit( EXIT_FAILURE );
@@ -144,14 +144,11 @@ int main( )
 	GnuplotWindow window;
 	window.addSubplot( sampledProcessOutput(0), "Body Position [m]" );
 	window.addSubplot( sampledProcessOutput(1), "Wheel Position [m]" );
-	window.addSubplot( sampledProcessOutput(2), "Body Velocity [m/s]" );
-	window.addSubplot( sampledProcessOutput(3), "Wheel Velocity [m/s]" );
+	// window.addSubplot( sampledProcessOutput(2), "Body Velocity [m/s]" );
+	// window.addSubplot( sampledProcessOutput(3), "Wheel Velocity [m/s]" );
 	window.addSubplot( feedbackControl(1),      "Damping Force [N]" );
 	window.addSubplot( feedbackControl(0),      "Road Excitation [m]" );
 	window.plot( );
 
     return EXIT_SUCCESS;
 }
-
-
-
